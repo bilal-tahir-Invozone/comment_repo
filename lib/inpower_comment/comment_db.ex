@@ -42,7 +42,6 @@ defmodule InpowerComment.Comment do
             where:  c.commentid == ^commentid
 
     delete_reply_by_commentid_in_repo(commentid)
-
     Repo.delete_all(query)
   end
 

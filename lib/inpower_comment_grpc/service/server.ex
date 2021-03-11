@@ -67,8 +67,14 @@ defmodule InpowerCommentGrpc.Service.Server do
   end
 
   def delete_comment(%DeleteCommentRequest{commentid: commentid}, _stream) do
-    with {:ok, deleting_comment} <- InpowerComment.HandleDb.delete_comment_by_id(commentid) do
-      DeleteCommentResponse.new(deleting_comment: deleting_comment)
+    with {1, deleting_comment} <- InpowerComment.HandleDb.delete_comment_by_id(commentid) do
+      case deleting_comment do
+        nil ->
+          DeleteCommentResponse.new(status: true)
+        _ ->
+          DeleteCommentResponse.new(status: false)
+      end
+
     else
       _error ->
         Logger.info("Did not find arguments #{commentid}")
@@ -109,8 +115,13 @@ defmodule InpowerCommentGrpc.Service.Server do
   end
 
   def delete_reply(%DeleteReplyRequest{replyid: replyid}, _stream) do
-    with {:ok, deleting_reply} <- InpowerComment.HandleDb.delete_reply_by_id(replyid) do
-      DeleteReplyResponse.new(deleting_reply: deleting_reply)
+    with {1, deleting_reply} <- InpowerComment.HandleDb.delete_reply_by_id(replyid) do
+      case deleting_reply do
+      nil ->
+        DeleteReplyResponse.new(status: true)
+      _ ->
+        DeleteReplyResponse.new(status: false)
+      end
     else
       _error ->
         Logger.info("Did not find arguments #{replyid}")
