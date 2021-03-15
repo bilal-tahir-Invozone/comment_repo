@@ -11,10 +11,10 @@ defmodule InpowerComment.Reply do
   end
 
   def get_reply!(commentid) do
-    query = from c in Replies,
-            where:  c.commentid == ^commentid
+    query = from(c in Replies,
+            where:  c.commentid == ^commentid)
 
-    Repo.all(query)
+    {:ok, Repo.all(query)}
   end
 
   def create_Replies(attrs \\ %{}) do

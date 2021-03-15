@@ -43,7 +43,9 @@ defmodule InpowerComment.MixProject do
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
       {:plug_cowboy, "~> 2.0"},
-      {:proto, git: "https://github.com/bilal-tahir-Invozone/comment_proto.git"},
+      # {:proto, git: "https://github.com/bilal-tahir-Invozone/proto_inpower.git"},
+      {:proto, path: "../comment_proto"}
+
     ]
   end
 

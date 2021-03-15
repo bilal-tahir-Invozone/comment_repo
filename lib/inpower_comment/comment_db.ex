@@ -11,10 +11,13 @@ defmodule InpowerComment.Comment do
   end
 
   def get_comments!(postid) do
-    query = from c in Comments,
-            where:  c.postid == ^postid
+    query =
+      from(c in Comments,
+        where: c.postid == ^postid
+      )
 
     {:ok, Repo.all(query)}
+
   end
 
   def create_comments(attrs \\ %{}) do
@@ -38,16 +41,20 @@ defmodule InpowerComment.Comment do
 
 
   def delete_comments_in_repo(commentid) do
-    query = from c in Comments,
+    query =
+          from(c in Comments,
             where:  c.commentid == ^commentid
+            )
 
     delete_reply_by_commentid_in_repo(commentid)
     Repo.delete_all(query)
   end
 
   defp delete_reply_by_commentid_in_repo(commentid) do
-    query = from c in Replies,
+    query =
+            from(c in Replies,
             where:  c.commentid == ^commentid
+            )
 
     Repo.delete_all(query)
 

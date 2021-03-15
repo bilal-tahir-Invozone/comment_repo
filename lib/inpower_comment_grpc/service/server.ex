@@ -1,5 +1,5 @@
 defmodule InpowerCommentGrpc.Service.Server do
-  use GRPC.Server, service: Commentapi.Comment.Service
+  use GRPC.Server, service: Commentapi.CommentService.Service
 
   alias Commentapi.{
     CreateCommentRequest,
@@ -36,9 +36,12 @@ defmodule InpowerCommentGrpc.Service.Server do
 
   def get_comment(%GetCommentRequest{postid: postid}, _stream) do
     with {:ok, getting_comment} <- InpowerComment.HandleDb.get_comment_by_id(postid) do
-      IO.puts "here is comments"
-      # IO.inspect getting_comment
-      IO.inspect GetCommentResponse.new(comments: getting_comment)
+      comment =
+      getting_comment
+      |> Enum.map(fn(x) -> Map.from_struct(x) end)
+
+      GetCommentResponse.new(comments: comment) |> IO.inspect
+
     else
       _error ->
         Logger.info("Did not find arguments #{postid}")
@@ -84,12 +87,17 @@ defmodule InpowerCommentGrpc.Service.Server do
 
   ################################# Replies ###########################################
 
-  def get_reply(%tGetReplyReques{postid: postid}, _stream) do
-    with {:ok, getting_reply} <- InpowerComment.HandleDb.get_replies_by_id(postid) do
-      GetReplyResponse.new(getting_reply: getting_reply)
+  def get_reply(%GetReplyRequest{commentid: commentid}, _stream) do
+    with {:ok, getting_reply} <- InpowerComment.HandleDb.get_replies_by_id(commentid) do
+
+      replies =
+      getting_reply
+      |> Enum.map(fn(x) -> Map.from_struct(x) end)
+
+      GetReplyResponse.new(replies: replies) |> IO.inspect
     else
       _error ->
-        Logger.info("Did not find arguments #{postid}")
+        Logger.info("Did not find arguments #{commentid}")
         GetReplyResponse.new()
     end
   end
