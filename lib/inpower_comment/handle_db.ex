@@ -5,9 +5,23 @@ defmodule InpowerComment.HandleDb do
   alias InpowerComment.Comments
   alias InpowerComment.Replies
   alias InpowerComment.Reply
+  alias InpowerComment.Media_db
 
 
-  def create_comments_in_Table(comment, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid) do
+  def create_comments_in_Table(comment, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid, media_url) do
+
+
+    case InpowerS3.base64_to_upload(media_url, "comments/replies") do
+      {:ok, media_url} ->
+        InpowerComment.Media_db.create_media( %{
+          commentid: commentid,
+          replyid: replyid,
+          status: "True",
+          media_url: media_url
+       })
+      {:error, _} ->
+        {:error, "Failed to upload Media file"}
+      end
 
     InpowerComment.Comment.create_comments( %{
       comments: comment,
@@ -32,6 +46,7 @@ defmodule InpowerComment.HandleDb do
   end
 
   def update_comments_in_table(comment, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid) do
+
     query = from c in Comments,
             where:  c.commentid == ^commentid
 
@@ -65,16 +80,34 @@ defmodule InpowerComment.HandleDb do
     InpowerComment.Reply.get_reply!(commentid)
   end
 
-  def create_replies_in_Table(isdeletedbyadmin, userid,  reply, replyid, postid, status, userlikes, likecount, commentid) do
+  def create_replies_in_Table(isdeletedbyadmin, userid,  reply, replyid, postid, status, userlikes, likecount, commentid, media_url) do
+
 
     query = from c in Comments,
             where:  c.commentid == ^commentid
     get_comment_for_reply = Repo.all(query) |> Enum.at(0)
 
+
     case get_comment_for_reply do
       nil ->
         {:error, "false"}
       _ ->
+
+
+        case InpowerS3.base64_to_upload(media_url, "comments/replies") do
+          {:ok, _} ->
+            InpowerComment.Media_db.create_media( %{
+              commentid: commentid,
+              replyid: replyid,
+              status: "True",
+              media_url: media_url
+           })
+          {:error, _} ->
+            {:error, "Failed to upload Media file"}
+          end
+
+
+
         InpowerComment.Reply.create_Replies( %{
           isdeletedbyadmin: isdeletedbyadmin,
           userid: userid,

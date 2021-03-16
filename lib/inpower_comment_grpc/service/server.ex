@@ -40,7 +40,7 @@ defmodule InpowerCommentGrpc.Service.Server do
       getting_comment
       |> Enum.map(fn(x) -> Map.from_struct(x) end)
 
-      GetCommentResponse.new(comments: comment) |> IO.inspect
+      GetCommentResponse.new(comments: comment)
 
     else
       _error ->
@@ -49,8 +49,8 @@ defmodule InpowerCommentGrpc.Service.Server do
     end
   end
 
-  def create_comment(%CreateCommentRequest{comment: comment, isdeletedbyadmin: isdeletedbyadmin, userid: userid, replyid: replyid, postid: postid, status: status, likecount: likecount, userlikes: userlikes, commentid: commentid}, _stream) do
-    with {:ok, creating_comment} <- InpowerComment.HandleDb.create_comments_in_Table(comment, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid) do
+  def create_comment(%CreateCommentRequest{comment: comment, isdeletedbyadmin: isdeletedbyadmin, userid: userid, replyid: replyid, postid: postid, status: status, likecount: likecount, userlikes: userlikes, commentid: commentid, media_url: media_url}, _stream) do
+    with {:ok, creating_comment} <- InpowerComment.HandleDb.create_comments_in_Table(comment, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid, media_url) do
       CreateCommentResponse.new(creating_comment: creating_comment)
     else
       _error ->
@@ -59,8 +59,8 @@ defmodule InpowerCommentGrpc.Service.Server do
     end
   end
 
-  def update_comment(%UpdateCommentRequest{comment: comment, isdeletedbyadmin: isdeletedbyadmin, userid: userid, replyid: replyid, postid: postid, status: status, likecount: likecount, userlikes: userlikes, commentid: commentid}, _stream) do
-    with {:ok, updating_comment} <- InpowerComment.HandleDb.update_comments_in_table(comment, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid) do
+  def update_comment(%UpdateCommentRequest{comment: comment, isdeletedbyadmin: isdeletedbyadmin, userid: userid, replyid: replyid, postid: postid, status: status, likecount: likecount, userlikes: userlikes, commentid: commentid, media_url: media_url}, _stream) do
+    with {:ok, updating_comment} <- InpowerComment.HandleDb.update_comments_in_table(comment, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid, media_url) do
       UpdateCommentResponse.new(updating_comment: updating_comment)
     else
       _error ->
@@ -102,8 +102,8 @@ defmodule InpowerCommentGrpc.Service.Server do
     end
   end
 
-  def create_reply(%CreateReplyRequest{reply: reply, isdeletedbyadmin: isdeletedbyadmin, userid: userid, replyid: replyid, postid: postid, status: status, likecount: likecount, userlikes: userlikes, commentid: commentid}, _stream) do
-    with {:ok, creating_reply} <- InpowerComment.HandleDb.create_replies_in_Table(isdeletedbyadmin, userid,  reply, replyid, postid, status, userlikes, likecount, commentid) do
+  def create_reply(%CreateReplyRequest{reply: reply, isdeletedbyadmin: isdeletedbyadmin, userid: userid, replyid: replyid, postid: postid, status: status, likecount: likecount, userlikes: userlikes, commentid: commentid, media_url: media_url}, _stream) do
+    with {:ok, creating_reply} <- InpowerComment.HandleDb.create_replies_in_Table(isdeletedbyadmin, userid,  reply, replyid, postid, status, userlikes, likecount, commentid, media_url) do
       CreateReplyResponse.new(creating_reply: creating_reply)
     else
       _error ->
@@ -112,8 +112,8 @@ defmodule InpowerCommentGrpc.Service.Server do
     end
   end
 
-  def update_reply(%UpdateReplyRequest{reply: reply, isdeletedbyadmin: isdeletedbyadmin, userid: userid, replyid: replyid, postid: postid, status: status, likecount: likecount, userlikes: userlikes, commentid: commentid}, _stream) do
-    with {:ok, updating_reply} <- InpowerComment.HandleDb.update_reply_in_table(reply, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid) do
+  def update_reply(%UpdateReplyRequest{reply: reply, isdeletedbyadmin: isdeletedbyadmin, userid: userid, replyid: replyid, postid: postid, status: status, likecount: likecount, userlikes: userlikes, commentid: commentid, media_url: media_url}, _stream) do
+    with {:ok, updating_reply} <- InpowerComment.HandleDb.update_reply_in_table(reply, isdeletedbyadmin, userid,  replyid, postid, status, userlikes, likecount, commentid, media_url) do
       UpdateReplyResponse.new(updating_reply: updating_reply)
     else
       _error ->
